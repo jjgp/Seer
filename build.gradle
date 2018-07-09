@@ -12,36 +12,44 @@ plugins {
     id 'application'
     id 'antlr'
     id 'java'
-}
-
-mainClassName = 'App'
-
-dependencies {
-    antlr "org.antlr:antlr4:+"
-    compile 'com.google.guava:guava:23.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    testCompile 'junit:junit:4.12'
+    id "org.jetbrains.kotlin.jvm" version "1.2.51"
 }
 
 repositories {
     jcenter()
 }
 
+mainClassName = 'App'
+
+dependencies {
+    antlr "org.antlr:antlr4:4.7.1"
+    compile "org.antlr:antlr4-runtime:4.7.1"
+    compile 'com.google.guava:guava:23.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile 'junit:junit:4.12'
+}
+
 generateGrammarSource {
     maxHeapSize = "64m"
     arguments += ["-visitor", "-long-messages"]
 }
-
-apply plugin: 'kotlin'
+compileJava.dependsOn generateGrammarSource
 
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
     }
 }
+compileKotlin.dependsOn generateGrammarSource
 
 compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+}
+
+clean.doLast {
+    delete "${buildDir}/generated-src"
 }
