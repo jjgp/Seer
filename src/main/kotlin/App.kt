@@ -1,20 +1,19 @@
 import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonTokenStream
 import java.io.FileInputStream
 
-class App {
-
-    companion object {
-
-        @JvmStatic
-        fun main(args: Array<String>) {
-            val inputStream = if (!args.isNotEmpty()) {
-                System.`in`
-            } else {
-                FileInputStream(args[0])
-            }
-
-            val charStream = CharStreams.fromStream(inputStream)
-            JavaScriptLexer(charStream)
-        }
+fun main(args: Array<String>) {
+    val input = if (!args.isNotEmpty()) {
+        System.`in`
+    } else {
+        FileInputStream(args[0])
     }
+
+    val characters = CharStreams.fromStream(input)
+    val lexer = JavaScriptLexer(characters)
+    val tokens = CommonTokenStream(lexer)
+    val parser = JavaScriptParser(tokens)
+    val context = parser.program()
+
+    print(context.getStart().toString())
 }
